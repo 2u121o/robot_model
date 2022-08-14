@@ -14,5 +14,8 @@ set(SOURCES
 set(HEADERS 
     include/robot.hpp)
 
-add_executable(robot_model ${SOURCES} ${HEADERS})
+#add_executable(robot_model ${SOURCES} ${HEADERS})
+#target_link_libraries(robot_model ${OpenCV_LIBS})
+
+add_library(robot_model SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(robot_model ${OpenCV_LIBS})

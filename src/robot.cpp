@@ -22,13 +22,13 @@ void Robot::moveRobot(cv::Mat &map, int direction){
         u_t = 0.054532925;
         break;
     case 82:   
-        u_v = 1;
+        u_v = 1.0;
         break;
     case 83:
         u_t = -0.054532925;
         break;
     case 84:
-        u_v = -1;
+        u_v = -1.0;
         break;
     default:
         break;
@@ -44,7 +44,7 @@ void Robot::moveRobot(cv::Mat &map, int direction){
     //kineamtic model
     state_tmp(0) = state_(0) + dt_*5*std::cos(state_(2))*u_v + state_noise_(0);
     state_tmp(1) = state_(1) - dt_*5*std::sin(state_(2))*u_v + state_noise_(1);
-    state_(2) = state_(2) + dt_*u_t + state_noise_(2);
+    state_(2) = state_(2) + dt_*2*u_t + state_noise_(2);
     
     if(!isCollided(map, state_tmp)){
         state_(0) = state_tmp(0);

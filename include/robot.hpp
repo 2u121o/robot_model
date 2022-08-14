@@ -27,7 +27,7 @@ private:
     Eigen::Vector3d state_;   //[x z theta]
     Eigen::Vector3d state_noise_;
     bool with_noise_;
-    const double dt_ = 1;
+    const double dt_ = 0.2;
     int radius_;
     const int thickness = 1;
 
