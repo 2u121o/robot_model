@@ -1,9 +1,9 @@
 #include "robot.hpp"
 
 Robot::Robot(const Eigen::Vector3d initial_state, int radius, bool add_noise): 
-state_(initial_state), 
-radius_(radius),  
-with_noise_(add_noise)
+                                                                                state_(initial_state), 
+                                                                                radius_(radius),  
+                                                                                with_noise_(add_noise)
 {
     std::cout << "[ROBOT] constructed" << std::endl;
     state_noise_.setZero();
@@ -74,70 +74,91 @@ bool Robot::isCollided(cv::Mat &map, Eigen::Vector3d state){
     return is_collided;
 }
 
-cv::Point Robot::getPointRange(cv::Mat &map, int radius, double &range, bool show_beam){
+void Robot::takeMeasurementsRange(cv::Mat &map){
+    double angle_min = -2.094395160675049;
+    double angle_max = 2.094395160675049;
+    double angle_increment = 0.0061239623464643955;
+    double range_min = 0.0010000000474974513;
+    double range_max = 50.0;
+    RangeFinder rangefinder(angle_min, angle_max, angle_increment,
+                                 range_min, range_max);
+    Eigen::Vector2d sensor_pose(state_[0], state_[1]);
+    rangefinder.takeMeasurements(map, sensor_pose, ranges_);
 
-    cv::Point meas_point(-1, -1);
-    double min_distance = 10000;
-    bool is_measured = false;
+    drawSensorLine();
 
-    
-    //with this first if it avoid core dump in case the robot reach the upper
-    //part of the window, in this way the radius is adapted
-    double robot_x = state_(0);
-    double robot_y = state_(1);
-    int radius_x = robot_x<=radius ? robot_x:radius;
-    int radius_y = robot_y<=radius ? robot_y:radius;
-    
-
-    for(int y=-radius_y; y<radius; y++){
-        for(int x=-radius_x; x<radius; x++){
-            cv::Vec3b pixel_color = map.at<cv::Vec3b>(robot_y+y, robot_x+x);
-            if(pixel_color[0]+pixel_color[1]+pixel_color[2] == 0){
-                double tmp_distance = std::sqrt(std::pow(x,2)+std::pow(y,2));
-                if(min_distance>tmp_distance){
-                    meas_point.x = robot_x+x;
-                    meas_point.y = robot_y+y;
-                    min_distance = tmp_distance;
-                    is_measured = true;
-                }
-            }
-        }
-    }
-
-    range = is_measured && with_noise_ ? min_distance+distribution_(generator_):min_distance;
-
-    if(range != 10000 && show_beam){
-        cv::Scalar color(255, 255, 0);
-        cv::Point start_line(robot_x, robot_y);
-        cv::line(map, start_line, meas_point, color, thickness);
-    }
-
-    return meas_point;
 }
 
-double Robot::getBearing(cv::Point nearest_point){
-
-    double robot_x = state_(0);
-    double robot_y = state_(1);
-    cv::Point robot_pose(robot_x, robot_y);
-
-    //nearest point in the robot RF
-    cv::Point nearest_point_in_robot = nearest_point - robot_pose;
-
-    double bearing = state_(2) + std::atan2(nearest_point_in_robot.y, nearest_point_in_robot.x);
-    if(with_noise_){
-        double ni = distribution_(generator_);
-        bearing += ni;
-    }
-    return bearing;
+void Robot::drawSensorLine(){
+    std::cout << "for each line draw a line in the correct direction" << std::endl;
 }
+
+// cv::Point Robot::getPointRange(cv::Mat &map, int radius, double &range, bool show_beam){
+
+//     cv::Point meas_point(-1, -1);
+//     double min_distance = 10000;
+//     bool is_measured = false;
+
+    
+//     //with this first if it avoid core dump in case the robot reach the upper
+//     //part of the window, in this way the radius is adapted
+//     double robot_x = state_(0);
+//     double robot_y = state_(1);
+//     int radius_x = robot_x<=radius ? robot_x:radius;
+//     int radius_y = robot_y<=radius ? robot_y:radius;
+    
+
+//     for(int y=-radius_y; y<radius; y++){
+//         for(int x=-radius_x; x<radius; x++){
+//             cv::Vec3b pixel_color = map.at<cv::Vec3b>(robot_y+y, robot_x+x);
+//             if(pixel_color[0]+pixel_color[1]+pixel_color[2] == 0){
+//                 double tmp_distance = std::sqrt(std::pow(x,2)+std::pow(y,2));
+//                 if(min_distance>tmp_distance){
+//                     meas_point.x = robot_x+x;
+//                     meas_point.y = robot_y+y;
+//                     min_distance = tmp_distance;
+//                     is_measured = true;
+//                 }
+//             }
+//         }
+//     }
+
+//     range = is_measured && with_noise_ ? min_distance+distribution_(generator_):min_distance;
+
+//     if(range != 10000 && show_beam){
+//         cv::Scalar color(255, 255, 0);
+//         cv::Point start_line(robot_x, robot_y);
+//         cv::line(map, start_line, meas_point, color, thickness);
+//     }
+
+//     return meas_point;
+// }
+
+// double Robot::getBearing(cv::Point nearest_point){
+
+//     double robot_x = state_(0);
+//     double robot_y = state_(1);
+//     cv::Point robot_pose(robot_x, robot_y);
+
+//     //nearest point in the robot RF
+//     cv::Point nearest_point_in_robot = nearest_point - robot_pose;
+
+//     double bearing = state_(2) + std::atan2(nearest_point_in_robot.y, nearest_point_in_robot.x);
+//     if(with_noise_){
+//         double ni = distribution_(generator_);
+//         bearing += ni;
+//     }
+//     return bearing;
+// }
 
 void Robot::drawRobot(cv::Mat &map){
 
+    //draws the robot
     cv::Point center(state_(0), state_(1));
     cv::Scalar color(50, 0, 0);
     cv::circle(map, center, radius_, color, thickness);
 
+    //draws the orientation line
     double l0_x  = state_(0);
     double l0_y = state_(1);
     double end_line_x = l0_x + radius_*std::cos(state_(2));
