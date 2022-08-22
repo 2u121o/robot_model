@@ -34,6 +34,7 @@ private:
     int radius_;
     const int thickness = 1;
 
+    RangeFinder rangefinder_;
     Eigen::VectorXd ranges_;
 
     std::default_random_engine generator_;
@@ -41,7 +42,7 @@ private:
 
     bool isCollided(cv::Mat &map, Eigen::Vector3d state);
 
-    void drawSensorLine();
+    void drawSensorLine(cv::Mat &map);
 };
 
 #endif

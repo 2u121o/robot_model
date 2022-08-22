@@ -1,13 +1,20 @@
 #include "robot.hpp"
 
-Robot::Robot(const Eigen::Vector3d initial_state, int radius, bool add_noise): 
-                                                                                state_(initial_state), 
-                                                                                radius_(radius),  
-                                                                                with_noise_(add_noise)
+Robot::Robot(const Eigen::Vector3d initial_state, int radius, bool add_noise): state_(initial_state), radius_(radius), with_noise_(add_noise)
 {
     std::cout << "[ROBOT] constructed" << std::endl;
     state_noise_.setZero();
     distribution_ = std::normal_distribution<double>(0,0.01);
+
+    double angle_min = -2.094395160675049;
+    double angle_max = 2.094395160675049;
+    // double angle_min = 0.0;
+    // double angle_max = 0.0+0.0061239623464643955;
+    double angle_increment = 0.0061239623464643955;
+    double range_min = 0.0010000000474974513;
+    double range_max = 50.0;
+    rangefinder_= RangeFinder(angle_min, angle_max, angle_increment,
+                                  range_min, range_max);
 
 }
 
@@ -56,8 +63,8 @@ void Robot::moveRobot(cv::Mat &map, int direction){
 
 bool Robot::isCollided(cv::Mat &map, Eigen::Vector3d state){
 
-    double x_c = state(0);
-    double y_c = state(1);
+    int x_c = (int)state(0);
+    int y_c = (int)state(1);
     bool is_collided = false;
     for(int x=-radius_; x<radius_; x++){
         for(int y=-radius_; y<radius_; y++){
@@ -75,22 +82,31 @@ bool Robot::isCollided(cv::Mat &map, Eigen::Vector3d state){
 }
 
 void Robot::takeMeasurementsRange(cv::Mat &map){
-    double angle_min = -2.094395160675049;
-    double angle_max = 2.094395160675049;
-    double angle_increment = 0.0061239623464643955;
-    double range_min = 0.0010000000474974513;
-    double range_max = 50.0;
-    RangeFinder rangefinder(angle_min, angle_max, angle_increment,
-                                 range_min, range_max);
+   
     Eigen::Vector2d sensor_pose(state_[0], state_[1]);
-    rangefinder.takeMeasurements(map, sensor_pose, ranges_);
-
-    drawSensorLine();
+    rangefinder_.takeMeasurements(map, sensor_pose, state_[2], ranges_);
+    // std::cout << ranges_ << std::endl;
+    drawSensorLine(map);
 
 }
 
-void Robot::drawSensorLine(){
-    std::cout << "for each line draw a line in the correct direction" << std::endl;
+void Robot::drawSensorLine(cv::Mat &map){
+
+    cv::Point current_pt(state_[0], state_[1]);
+    cv::Scalar color(50, 0, 0);
+
+    double angle_min = -2.094395160675049;
+    double angle_increment = 0.0061239623464643955;
+    int num_ranges = ranges_.size();    
+    for(int i=0; i<num_ranges; i++){
+        double angle =  angle_min+(i*angle_increment);
+        int x = (int)(ranges_[i]*std::cos(state_[2]+angle));
+        int y = (int)(-ranges_[i]*std::sin(state_[2]+ angle));
+
+        cv::Point meas_point(x,y);
+        cv::line(map, current_pt, meas_point, color, thickness);
+
+    }
 }
 
 // cv::Point Robot::getPointRange(cv::Mat &map, int radius, double &range, bool show_beam){

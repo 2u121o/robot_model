@@ -1,6 +1,10 @@
 #include "rangefinder.hpp"
 
 
+RangeFinder::RangeFinder(){
+    std::cout << "[rangefinder] constructed" << std::endl;
+}
+
 RangeFinder::RangeFinder(double angle_min, double angle_max, double angle_increment, double range_min, double range_max):
 angle_min_(angle_min), angle_max_(angle_max), angle_increment_(angle_increment),
 range_min_(range_min), range_max_(range_max)
@@ -12,7 +16,7 @@ range_min_(range_min), range_max_(range_max)
     seq_ = 0;
 }
 
-void RangeFinder::takeMeasurements(cv::Mat &map, Eigen::Vector2d sensor_pose, Eigen::VectorXd &ranges){
+void RangeFinder::takeMeasurements(cv::Mat &map, Eigen::Vector2d sensor_pose, double orientation,  Eigen::VectorXd &ranges){
    
     //                     meas_point
     //                     /| meas_point_y
@@ -21,14 +25,19 @@ void RangeFinder::takeMeasurements(cv::Mat &map, Eigen::Vector2d sensor_pose, Ei
     //                  /___|
     //       sensor_pose    meas_point_x
 
-    double theta = angle_min_;
+    
     for(int k=0; k<num_meas_; k++){
-        double meas_point_y = std::sqrt(range_max_*std::tan(theta)/(1+std::tan(theta)));
-        double meas_point_x = std::sqrt(range_max_-std::pow(meas_point_y,2));
+        double theta = orientation+angle_min_+(k*angle_increment_);
+        double meas_point_y = std::sqrt(std::pow(range_max_,2)*std::pow(std::tan(theta),2)/(1+std::pow(std::tan(theta),2)));
+        double meas_point_x = std::sqrt(std::pow(range_max_,2)-std::pow(meas_point_y,2));
+        
+        //std::cout << orientation << std::endl;
+        //std::cout << "x --> " << meas_point_x << " y --> " << meas_point_y << std::endl;
+        std::cout << std::tan(theta) << std::endl;
 
         cv::Point meas_point(meas_point_x, meas_point_y);
         cv::Point sensor_pose_pt(sensor_pose[0], sensor_pose[1]);
-        cv::LineIterator it(map, sensor_pose_pt, meas_point, 8);
+        cv::LineIterator it(map, meas_point, sensor_pose_pt, 8); 
         int num_points = it.count;
         std::vector<cv::Point> points_line(num_points);
 
@@ -39,7 +48,7 @@ void RangeFinder::takeMeasurements(cv::Mat &map, Eigen::Vector2d sensor_pose, Ei
         for(int i=0; i<num_points; i++, ++it){
             x = it.pos().x;
             y = it.pos().y;
-
+           
             cv::Vec3b px_color = map.at<cv::Vec3b>(x,-y);
             if(px_color[0]+px_color[1]+px_color[2] == 0){
                 is_measured = true;
