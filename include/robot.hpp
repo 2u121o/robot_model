@@ -14,12 +14,10 @@ class Robot
 {
 
 public:
-    Robot(const Eigen::Vector3d initial_state, int radius, bool add_noise);
+    Robot(cv::Mat &initiail_map, const Eigen::Vector3d initial_state, int radius, bool add_noise);
     void moveRobot(cv::Mat &map, int direction);
     void takeMeasurementsRange(cv::Mat &map);
 
-    // cv::Point getPointRange(cv::Mat &map, int radius, double &range, bool show_beam);
-    // double getBearing(cv::Point nearest_point);
     void drawRobot(cv::Mat &map);
 
     Eigen::Vector3d getStates();
@@ -33,6 +31,9 @@ private:
     const double dt_ = 0.2;
     int radius_;
     const int thickness = 1;
+
+    double angle_min_;
+    double angle_increment_;
 
     RangeFinder rangefinder_;
     Eigen::VectorXd ranges_;
