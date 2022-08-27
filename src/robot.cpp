@@ -79,11 +79,11 @@ bool Robot::isCollided(cv::Mat &map, Eigen::Vector3d state){
     return is_collided;
 }
 
-void Robot::takeMeasurementsRange(cv::Mat &map){
+void Robot::takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges){
    
     Eigen::Vector2d sensor_pose(state_[0], state_[1]);
     rangefinder_.takeMeasurements(sensor_pose, state_[2], ranges_);
-    // std::cout << ranges_ << std::endl;
+    ranges = ranges_;
     drawSensorLine(map);
 
 }

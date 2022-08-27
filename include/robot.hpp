@@ -16,7 +16,7 @@ class Robot
 public:
     Robot(cv::Mat &initiail_map, const Eigen::Vector3d initial_state, int radius, bool add_noise);
     void moveRobot(cv::Mat &map, int direction);
-    void takeMeasurementsRange(cv::Mat &map);
+    void takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges);
 
     void drawRobot(cv::Mat &map);
 
