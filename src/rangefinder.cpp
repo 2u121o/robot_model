@@ -27,6 +27,8 @@ range_min_(range_min), range_max_(range_max)
         circ_points_[i][1] = y;
     }
 
+    min_points_.resize(num_meas_);
+
 
 }
 
@@ -86,12 +88,20 @@ void RangeFinder::takeMeasurements(Eigen::Vector2d sensor_pose, double orientati
             // }
         }
 
+        Eigen::Vector2d min_point(x, y);
+        min_points_[k] = min_point;
+        
+
         //at this point i have the x and y for which the point is detected
         double new_range = std::sqrt(std::pow(sensor_pose[0]-x,2)+std::pow(sensor_pose[1]-y,2));
         ranges_[k] = is_measured ? new_range:range_max_;
 
     }
     ranges = ranges_;
+}
+
+void RangeFinder::getPoints(std::vector<Eigen::Vector2d> &min_points){
+    min_points = min_points_;
 }
 
 void RangeFinder::setAngleMin(double angle_min){

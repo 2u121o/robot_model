@@ -21,6 +21,7 @@ public:
     void drawRobot(cv::Mat &map);
 
     Eigen::Vector3d getStates();
+    void getMinPoints(std::vector<Eigen::Vector2d> &min_points);
 
     ~Robot();
 
@@ -40,6 +41,8 @@ private:
 
     std::default_random_engine generator_;
     std::normal_distribution<double> distribution_;
+
+    std::vector<Eigen::Vector2d> min_points_;
 
     bool isCollided(cv::Mat &map, Eigen::Vector3d state);
 

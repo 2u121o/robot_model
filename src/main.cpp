@@ -25,6 +25,7 @@ int main(){
     int k = cv::waitKey(0);
     
     Eigen::VectorXd ranges; 
+    std::vector<Eigen::Vector2d> min_points;
     while(1){
    
         // std::cout << distribution(generator) << std::endl;
@@ -33,6 +34,7 @@ int main(){
         robot.moveRobot(map, k);
         robot.takeMeasurementsRange(map, ranges);
         std::cout << ranges.transpose() << std::endl;
+        robot.getMinPoints(min_points);
         robot.drawRobot(map);
         cv::imshow("Map", map);
         k = cv::waitKey(0);

@@ -84,6 +84,7 @@ void Robot::takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges){
     Eigen::Vector2d sensor_pose(state_[0], state_[1]);
     rangefinder_.takeMeasurements(sensor_pose, state_[2], ranges_);
     ranges = ranges_;
+    rangefinder_.getPoints(min_points_);
     drawSensorLine(map);
 
 }
@@ -136,6 +137,10 @@ void Robot::drawRobot(cv::Mat &map){
 
 Eigen::Vector3d Robot::getStates(){
     return state_;
+}
+
+ void Robot::getMinPoints(std::vector<Eigen::Vector2d> &min_points){
+    min_points = min_points_;
 }
 
 Robot::~Robot()

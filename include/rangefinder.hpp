@@ -19,6 +19,8 @@ public:
 
     void takeMeasurements(Eigen::Vector2d sensor_pose, double orientation,  Eigen::VectorXd &ranges);
 
+    void getPoints(std::vector<Eigen::Vector2d> &min_points);
+
     void setAngleMin(double angle_min);
     void setAngleMax(double angle_max);
     void setAngleIncrement(double angle_increment);
@@ -42,6 +44,8 @@ private:
     //auto stamp_;                  //timestamp
 
     int num_meas_;
+
+    std::vector<Eigen::Vector2d> min_points_;
 
 };
 
