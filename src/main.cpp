@@ -6,9 +6,6 @@
 #include "robot.hpp"
 
 int main(){
-
-    
-
     
     Eigen::Vector3d initial_state;
     initial_state << 100, 100, 0;
