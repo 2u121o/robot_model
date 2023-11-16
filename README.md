@@ -15,8 +15,9 @@ make
 this last command launches the 2D map and the robot as follow
 
 
-![map_screen](https://user-images.githubusercontent.com/32509386/184494559-a312c9d1-7c3f-4152-b2b4-d0c1db807212.png)
+![mobile_robot_model_lidar](https://github.com/2u121o/robot_model/assets/32509386/4c3b152b-68cb-4c37-9e1e-48e996ddc150)
 
 where the thick edges represent the walls, that the robot can not cross. The robot body is represented by the circle and the orientation wrt the x-axis by the black line inside the robot. Instead the light blu line represent the range measurement with the closest point.
+
 
 This robot model can be easily implemented as an external library, see the main.cpp as an example.
