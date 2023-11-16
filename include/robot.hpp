@@ -25,7 +25,7 @@ public:
 
     ~Robot();
 
-private:
+protected:
     Eigen::Vector3d state_;   //[x z theta]
     Eigen::Vector3d state_noise_;
     bool with_noise_;
@@ -43,6 +43,8 @@ private:
     std::normal_distribution<double> distribution_;
 
     std::vector<Eigen::Vector2d> min_points_;
+
+    cv::Mat map_;
 
     bool isCollided(cv::Mat &map, Eigen::Vector3d state);
 

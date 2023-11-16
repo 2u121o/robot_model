@@ -21,8 +21,8 @@ set(HEADERS
     include/robot.hpp
     include/rangefinder.hpp)
 
-# add_executable(robot_model ${SOURCES} ${HEADERS})
-# target_link_libraries(robot_model ${OpenCV_LIBS})
+add_executable(${PROJECT_NAME}_test ${SOURCES} ${HEADERS})
+target_link_libraries(${PROJECT_NAME}_test ${OpenCV_LIBS} ${Eigen3})
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Eigen3})

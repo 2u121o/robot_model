@@ -1,13 +1,20 @@
 #include "robot.hpp"
 
-Robot::Robot(cv::Mat &initial_map, const Eigen::Vector3d initial_state, int radius, bool add_noise): state_(initial_state), radius_(radius), with_noise_(add_noise)
+Robot::Robot(cv::Mat &initial_map, const Eigen::Vector3d initial_state, int radius, bool add_noise): 
+state_{initial_state}, 
+radius_{radius}, 
+with_noise_{add_noise},
+map_{initial_map}
 {
     std::cout << "[ROBOT] constructed" << std::endl;
     state_noise_.setZero();
     distribution_ = std::normal_distribution<double>(0,0.01);
 
+    //TODO: add the possibility to set the sensor parameters
     angle_min_ = -2.0944;
     double angle_max = 2.0944;
+    // angle_min_ = -M_PI;
+    // double angle_max = M_PI;
     angle_increment_ = 0.0061;
     double range_min = 0.0010;
     double range_max = 50.0;
