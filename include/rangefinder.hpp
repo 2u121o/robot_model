@@ -13,22 +13,20 @@ class RangeFinder
 {
 
 public:
-    RangeFinder();
-    RangeFinder(cv::Mat &map, double angle_min, double angle_max, double angle_increment, double range_min, double range_max);
+    RangeFinder() = default;
+    RangeFinder(const cv::Mat &map, double angle_min, double angle_max, double angle_increment, double range_min, double range_max);
 
+    void takeMeasurements(const Eigen::Vector2d &sensor_pose, const double orientation,  Eigen::VectorXd &ranges);
 
-    void takeMeasurements(Eigen::Vector2d sensor_pose, double orientation,  Eigen::VectorXd &ranges);
+    void getPoints(std::vector<Eigen::Vector2d> &min_points) const;
 
-    void getPoints(std::vector<Eigen::Vector2d> &min_points);
-
+    //create a typekit this is part of the typekit
     void setAngleMin(double angle_min);
     void setAngleMax(double angle_max);
     void setAngleIncrement(double angle_increment);
     void setRangeMin(double range_min);
     void setRangeMax(double range_max);
 
-
-    ~RangeFinder();
 private:
     cv::Mat map_;
     double angle_min_;
@@ -40,7 +38,6 @@ private:
     std::vector<Eigen::Vector2d> circ_points_;
 
     Eigen::VectorXd ranges_;
-    int seq_;                    //incremental value for each meas
     //auto stamp_;                  //timestamp
 
     int num_meas_;

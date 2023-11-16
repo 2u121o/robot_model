@@ -14,8 +14,8 @@ class Robot
 {
 
 public:
-    Robot(cv::Mat &initiail_map, const Eigen::Vector3d initial_state, int radius, bool add_noise);
-    void moveRobot(cv::Mat &map, int direction);
+    Robot(const cv::Mat &initiail_map, const Eigen::Vector3d initial_state, int radius, bool add_noise);
+    void moveRobot(const cv::Mat &map, int direction);
     void takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges);
 
     void drawRobot(cv::Mat &map);
@@ -23,10 +23,9 @@ public:
     Eigen::Vector3d getStates();
     void getMinPoints(std::vector<Eigen::Vector2d> &min_points);
 
-    ~Robot();
-
 private:
     Eigen::Vector3d state_;   //[x z theta]
+    Eigen::Vector3d state_before_collision_check_;
     Eigen::Vector3d state_noise_;
     bool with_noise_;
     const double dt_ = 0.2;
@@ -44,7 +43,7 @@ private:
 
     std::vector<Eigen::Vector2d> min_points_;
 
-    bool isCollided(cv::Mat &map, Eigen::Vector3d state);
+    bool isCollided(const cv::Mat &map,const Eigen::Vector3d &state);
 
     void drawSensorLine(cv::Mat &map);
 };
