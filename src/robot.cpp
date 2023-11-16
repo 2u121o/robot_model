@@ -11,6 +11,8 @@ Robot::Robot(cv::Mat &initial_map, const Eigen::Vector3d initial_state, int radi
     angle_increment_ = 0.0061;
     double range_min = 0.0010;
     double range_max = 50.0;
+    std::cout << "angle_min: " << angle_min_ << std::endl;
+    std::cout << "angle_max: " << angle_max << std::endl;
     rangefinder_= RangeFinder(initial_map, angle_min_, angle_max, angle_increment_,
                                   range_min, range_max);
     
@@ -27,13 +29,13 @@ void Robot::moveRobot(cv::Mat &map, int direction){
         u_t = 0.054532925;
         break;
     case 82:   
-        u_v = 1.0;
+        u_v = 1.5;
         break;
     case 83:
         u_t = -0.054532925;
         break;
     case 84:
-        u_v = -1.0;
+        u_v = -1.5;
         break;
     default:
         break;

@@ -11,10 +11,10 @@ int main(){
     initial_state << 100, 100, 0;
     
 
-    std::string paht_map = "../map.png";
+    std::string paht_map = "../map_new_obs.png";
 
     cv::Mat map = cv::imread(paht_map);
-    Robot robot(map, initial_state, 20, false);
+    Robot robot(map, initial_state, 10, false);
 
 
     robot.drawRobot(map);
@@ -24,7 +24,7 @@ int main(){
     Eigen::VectorXd ranges; 
     std::vector<Eigen::Vector2d> min_points;
     while(1){
-   
+        
         // std::cout << distribution(generator) << std::endl;
         map = cv::imread(paht_map);
         if(k==27 || k==-1) return 0;
