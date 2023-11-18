@@ -8,7 +8,7 @@
 
 #include "opencv2/opencv.hpp"
 
-#include "rangefinder.hpp"
+#include "RangeFinder.hpp"
 
 class Robot
 {

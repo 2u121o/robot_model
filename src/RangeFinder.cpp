@@ -1,4 +1,4 @@
-#include "rangefinder.hpp"
+#include "RangeFinder.hpp"
 
 
 RangeFinder::RangeFinder(const cv::Mat &map, const SensorSettings &sensor_settings):

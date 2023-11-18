@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-#include "robot.hpp"
+#include "Robot.hpp"
 #include "typekit.hpp"
 
 int main(){

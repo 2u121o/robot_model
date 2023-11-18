@@ -1,5 +1,5 @@
-#ifndef RANGEFINDER_H
-#define RANGEFINDER_H
+#ifndef RANGE_FINDER_H
+#define RANGE_FINDER_H
 
 #include <iostream>
 #include <math.h>

@@ -14,12 +14,12 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 set(SOURCES 
     src/main.cpp
-    src/robot.cpp
-    src/rangefinder.cpp)
+    src/Robot.cpp
+    src/RangeFinder.cpp)
 
 set(HEADERS 
-    include/robot.hpp
-    include/rangefinder.hpp)
+    include/Robot.hpp
+    include/RangeFinder.hpp)
 
 add_executable(${PROJECT_NAME}_exe ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME}_exe ${OpenCV_LIBS} ${Eigen3})

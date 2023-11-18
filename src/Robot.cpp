@@ -1,4 +1,4 @@
-#include "robot.hpp"
+#include "Robot.hpp"
 
 Robot::Robot(const cv::Mat &initial_map, const RobotState &initial_state, int radius, bool add_noise): 
 robot_state_{initial_state}, 
