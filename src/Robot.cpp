@@ -86,53 +86,6 @@ void Robot::takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges)
     rangefinder_.takeMeasurements(sensor_pose_, ranges_);
     ranges = ranges_;
     rangefinder_.getPoints(min_points_);
-    drawSensorLine(map);
-}
-
-void Robot::drawSensorLine(cv::Mat &map)
-{
-
-    cv::Point current_pt(robot_state_.x, robot_state_.y);
-    cv::Scalar color(255, 224, 20);
-
-    double orientation = robot_state_.theta;
-    int num_ranges = ranges_.size();    
-    for(int i=0; i<num_ranges; i++)
-    {
-        double angle =  sensor_settings_.angle_min+(i*sensor_settings_.angle_increment);
-        double x = (ranges_[num_ranges-i-1]*std::cos(angle));
-        double y = (-ranges_[num_ranges-i-1]*std::sin(angle));
-
-        Eigen::Vector2d meas_point(x,y);
-        Eigen::Matrix2d R;
-        R << std::cos(orientation), std::sin(orientation),
-             -std::sin(orientation), std::cos(orientation);
-
-        Eigen::Vector2d t;
-        t << robot_state_.x, robot_state_.y;
-        meas_point = R*meas_point + t;
-
-        cv::Point meas_point_pt((int)meas_point[0],(int)meas_point[1]);
-        cv::line(map, current_pt, meas_point_pt, color, thickness);
-
-    }
-}
-
-void Robot::drawRobot(cv::Mat &map)
-{
-    //draws the robot
-    cv::Point center(robot_state_.x,robot_state_.y);
-    cv::Scalar color(100, 0, 0);
-    cv::circle(map, center, radius_, color, thickness);
-
-    //draws the orientation line
-    double l0_x  = robot_state_.x;
-    double l0_y = robot_state_.y;
-    double end_line_x = l0_x + radius_*std::cos(robot_state_.theta);
-    double end_line_y = l0_y - radius_*std::sin(robot_state_.theta);
-    cv::Point end_line(end_line_x, end_line_y);
-    cv::Point start_line(l0_x, l0_y);
-    cv::line(map, start_line, end_line, color, thickness);
 }
 
 RobotState Robot::getStates() const
@@ -140,7 +93,44 @@ RobotState Robot::getStates() const
     return robot_state_;
 }
 
+int Robot::getRadius() const
+{
+    return radius_;    
+}
+
  void Robot::getMinPoints(std::vector<Eigen::Vector2d> &min_points) const
  {
     min_points = min_points_;
+}
+
+int Robot::getThickness() const
+{
+    return thickness_;
+}
+
+void Robot::getSensorSettings(SensorSettings &sensor_settings) const
+{
+    sensor_settings = sensor_settings_;
+}
+
+void Robot::getRanges(Eigen::VectorXd &ranges) const
+{
+    ranges = ranges_;
+}
+
+Robot& Robot::operator=(const Robot &robot)
+{
+    if(this==&robot)
+    {
+        return *this;
+    }
+    
+    robot_state_ = robot.robot_state_;
+    with_noise_ = robot.with_noise_;
+    radius_ = robot.radius_;
+    sensor_settings_ = robot.sensor_settings_;
+    rangefinder_ = robot.rangefinder_;
+    distribution_ = robot.distribution_;
+    ranges_  = robot.ranges_;
+    return *this;
 }

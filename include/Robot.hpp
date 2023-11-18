@@ -14,15 +14,23 @@ class Robot
 {
 
 public:
+
+    Robot() = default;
     Robot(const cv::Mat &initiail_map, const RobotState &initial_state, int radius, bool add_noise);
     void moveRobot(const cv::Mat &map, int direction);
     void takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges);
 
-    void drawRobot(cv::Mat &map);
-
     RobotState getStates() const;
+    int getThickness() const;
+    
+    int getRadius() const;
 
     void getMinPoints(std::vector<Eigen::Vector2d> &min_points) const;
+
+    void getSensorSettings(SensorSettings &sensor_settings) const;
+    void getRanges(Eigen::VectorXd &ranges) const;
+
+    Robot& operator=(const Robot &robot);
 
 private:
 
@@ -32,7 +40,7 @@ private:
     bool with_noise_;
     const double dt_ = 0.2;
     int radius_;
-    const int thickness = 1;
+    const int thickness_ = 1;
 
     SensorPose sensor_pose_;
     SensorSettings sensor_settings_;
