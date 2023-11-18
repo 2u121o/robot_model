@@ -4,18 +4,19 @@
 #include <Eigen/Dense>
 
 #include "robot.hpp"
+#include "typekit.hpp"
 
 int main(){
     
-    Eigen::Vector3d initial_state;
-    initial_state << 100, 100, 0;
-    
+    RobotState initial_state;
+    initial_state.x = 100.0;
+    initial_state.y = 100.0;
+    initial_state.theta = 0.0;
 
     std::string paht_map = "../map_new_obs.png";
 
     cv::Mat map = cv::imread(paht_map);
     Robot robot(map, initial_state, 10, false);
-
 
     robot.drawRobot(map);
     cv::imshow("Map", map);
