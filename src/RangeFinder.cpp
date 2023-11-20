@@ -28,14 +28,6 @@ sensor_settings_{sensor_settings}
 
 void RangeFinder::takeMeasurements(const SensorPose &sensor_pose, Eigen::VectorXd &ranges)
 {
-   
-    //                     meas_point
-    //                     /| meas_point_y
-    //          range_max / |  theta->angle between r and b
-    //                   /  |
-    //                  /___|
-    //       sensor_pose    meas_point_x
-
     
     for(int k=0; k<num_meas_; k++)
     {
@@ -53,42 +45,30 @@ void RangeFinder::takeMeasurements(const SensorPose &sensor_pose, Eigen::VectorX
         cv::Point meas_point_pt(meas_point[0], meas_point[1]);
         cv::Point sensor_pose_pt(sensor_pose.x, sensor_pose.y);
 
-        cv::LineIterator it(map_,sensor_pose_pt,  meas_point_pt,  8); 
+        cv::LineIterator it(map_, sensor_pose_pt,  meas_point_pt,  8); 
         int num_points = it.count;
     
-        //points along the line
         int x;
         int y;
         bool is_measured = false;
-        //bool is_black = false;
+
         for(int i=0; i<num_points; i++, ++it)
         {
             x = it.pos().x;
             y = it.pos().y;
            
             const cv::Vec3b &px_color = map_.at<cv::Vec3b>(y,x);
-            
-            //whit this 2 if is faster because it starts to count from the end 
-            //end i avoid that the sensor line goes on to of the wall 
-            //but just at the beginning from the robot side and on the opposite side
+
             if(px_color[0]+px_color[1]+px_color[2] == 0)
             {
-                //is_black = true;
                 is_measured = true;
                 break;
             }
-            // if(is_black && px_color[0]+px_color[1]+px_color[2] == 765){
-            //     is_measured = true;
-            //     is_black = false;
-            //     break;
-            // }
         }
 
         Eigen::Vector2d min_point(x, y);
         min_points_[k] = min_point;
-        
-
-        //at this point i have the x and y for which the point is detected
+    
         double new_range = std::sqrt(std::pow(sensor_pose.x-x,2)+std::pow(sensor_pose.y-y,2));
         ranges_[k] = is_measured ? new_range:sensor_settings_.range_max;
 

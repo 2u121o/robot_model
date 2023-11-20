@@ -38,12 +38,10 @@ int main(){
         robot.takeMeasurementsRange(map, ranges);
         std::cout << ranges.transpose() << std::endl;
         robot.getMinPoints(min_points);
-        // robot.drawRobot(map);
         world.setMap(map);
         world.setRobot(robot);
         world.drawWorld();
         k = world.getK();
-        
     }
 
     return 0;

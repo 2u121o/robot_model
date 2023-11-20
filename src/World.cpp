@@ -14,7 +14,7 @@ void World::drawRobot()
 {
     cv::Point center(robot_state_.x,robot_state_.y);
     cv::Scalar color(100, 0, 0);
-    cv::circle(map_, center, robot_.getRadius(), color, robot_.getThickness());
+    cv::circle(map_, center, robot_.getRadius(), color, 1);
 
     int radius = robot_.getRadius();
 
@@ -24,7 +24,7 @@ void World::drawRobot()
     double end_line_y = l0_y - radius*std::sin(robot_state_.theta);
     cv::Point end_line(end_line_x, end_line_y);
     cv::Point start_line(l0_x, l0_y);
-    cv::line(map_, start_line, end_line, color, robot_.getThickness());
+    cv::line(map_, start_line, end_line, color, 1);
 }
 
 void World::drawSensorLines()

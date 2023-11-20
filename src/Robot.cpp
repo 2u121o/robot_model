@@ -49,9 +49,9 @@ void Robot::moveRobot(const cv::Mat &map, int direction)
             state_noise_(k) = distribution_(generator_);
     }
 
-    state_before_collision_check_.x = robot_state_.x + dt_*5*std::cos(robot_state_.theta)*u_v + state_noise_(0);
-    state_before_collision_check_.y = robot_state_.y - dt_*5*std::sin(robot_state_.theta)*u_v + state_noise_(1);
-    robot_state_.theta = robot_state_.theta + dt_*2*u_t + state_noise_(2);
+    state_before_collision_check_.x = robot_state_.x + STEP_SIZE*5*std::cos(robot_state_.theta)*u_v + state_noise_(0);
+    state_before_collision_check_.y = robot_state_.y - STEP_SIZE*5*std::sin(robot_state_.theta)*u_v + state_noise_(1);
+    robot_state_.theta = robot_state_.theta + STEP_SIZE*2*u_t + state_noise_(2);
     
     if(!isCollided(map, state_before_collision_check_))
     {
@@ -101,11 +101,6 @@ int Robot::getRadius() const
  void Robot::getMinPoints(std::vector<Eigen::Vector2d> &min_points) const
  {
     min_points = min_points_;
-}
-
-int Robot::getThickness() const
-{
-    return thickness_;
 }
 
 void Robot::getSensorSettings(SensorSettings &sensor_settings) const
