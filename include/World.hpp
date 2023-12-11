@@ -21,7 +21,7 @@ class World
          * @brief Draw the World with the robot and the relative sensors.
          * 
          */
-        void drawWorld();
+        void drawWorld(const int visualization_time);
 
         /**
          * @brief Set the Map object.

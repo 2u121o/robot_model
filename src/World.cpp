@@ -1,12 +1,19 @@
 #include "World.hpp"
 
-void World::drawWorld()
+void World::drawWorld(const int visualization_time)
 {
     drawRobot();
     drawSensorLines();
 
     cv::imshow("Map", map_);
-    key_ = cv::waitKey(0); 
+    if(visualization_time == 0)
+    {
+        key_ = cv::waitKey(visualization_time); 
+    }
+    else
+    {
+        cv::waitKey(visualization_time); 
+    }
 }
 
 

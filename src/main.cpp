@@ -25,7 +25,7 @@ int main(){
     World world;
     world.setMap(map);
     world.setRobot(robot);
-    world.drawWorld();
+    world.drawWorld(0);
     k = world.getK();
     
     Eigen::VectorXd ranges; 
@@ -40,7 +40,7 @@ int main(){
         robot.getMinPoints(min_points);
         world.setMap(map);
         world.setRobot(robot);
-        world.drawWorld();
+        world.drawWorld(0);
         k = world.getK();
     }
 

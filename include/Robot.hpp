@@ -96,7 +96,7 @@ public:
 
     Robot& operator=(const Robot &robot);
 
-private:
+protected:
 
     //! Current state of the robot. (Cartesian position and orientation)
     RobotState robot_state_;
