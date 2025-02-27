@@ -12,6 +12,24 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+find_package(jsoncpp REQUIRED)
+
+find_package(Boost REQUIRED COMPONENTS filesystem system)
+IF(Boost_FOUND)
+    message(STATUS "${BoldGreen}[OK]${ColourReset}Boost found. VERSION: ${Boost_VERSION}\n")
+    message(STATUS "${BoldGreen}[OK]${ColourReset}Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}\n")
+    add_definitions(${Boost_DEFINITIONS})
+    include_directories(${Boost_INCLUDE_DIRS})
+ELSE()
+    message(FATAL_ERROR "${BoldRed}[NOT OK] ${ColourReset}Boost NOT found.\n")
+ENDIF()
+
+find_package(CURL REQUIRED)
+
+find_package(probabilistic_filters REQUIRED)
+include_directories(${probabilistic_filters_INCLUDE_DIRS})
+
+
 set(SOURCES 
     src/main.cpp
     src/Robot.cpp
@@ -27,10 +45,10 @@ set(HEADERS
     include/PoseEstimator.hpp)
 
 add_executable(${PROJECT_NAME}_exe ${SOURCES} ${HEADERS})
-target_link_libraries(${PROJECT_NAME}_exe ${OpenCV_LIBS} ${Eigen3})
+target_link_libraries(${PROJECT_NAME}_exe ${OpenCV_LIBS} ${Eigen3} ${probabilistic_filters_LIBRARIES} jsoncpp ${Boost_LIBRARIES} CURL::libcurl)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Eigen3})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Eigen3} ${probabilistic_filters_LIBRARIES} jsoncpp ${Boost_LIBRARIES} CURL::libcurl)
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${PROJECT_NAME})
 

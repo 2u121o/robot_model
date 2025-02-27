@@ -6,39 +6,60 @@ PoseEstimator::PoseEstimator(const RobotState &initial_state)
     current_state_robot_state_ = initial_state;
     current_state_.resize(3);
     current_state_ << initial_state.x, initial_state.y, initial_state.theta;
+    std::string file_config_path = "/home/dario/Workspace/robot_model/config/ukf_params.json"; 
+    ukf_.initialize(current_state_, file_config_path);
+    ukf_.setStateTransitionFunction([this](Eigen::VectorXd& prediction, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k) -> void
+                                    {
+                                        std::cout << "stateTransition LAMBDA" << std::endl;
+                                        this->stateTransition(prediction, state, input_k);
+                                    });
+    ukf_.setOutputTransitionFunction([this](Eigen::VectorXd& output, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k) -> void
+                                    {
+                                        this->outputTransition(output, state, input_k);
+                                    });
 }
 
 void PoseEstimator::estimatePose(const int input_k, const Eigen::VectorXd& ranges)
 {
+    std::cout << "estimatePose" << std::endl;
     ranges_ = ranges;
     Eigen::VectorXd output;
-    stateTransition(current_state_, input_k);
-    outputTransition(output, current_state_, input_k);
-
-
+    // stateTransition(current_state_, input_k);
+    // outputTransition(output, current_state_, input_k);
+    Eigen::VectorXd input_k_vec(1);
+    input_k_vec << input_k;
+    std::cout << "estimatePose1" << std::endl;
+    ukf_.computePrediction(input_k_vec);
+    std::cout << "estimatePose2" << std::endl;
+    ukf_.computeCorrection(ranges_);
+    std::cout << "estimatePose3" << std::endl;
+    ukf_.getState(current_state_);
 }
 
-void PoseEstimator::stateTransition(Eigen::VectorXd& state, const int input_k)
+void PoseEstimator::stateTransition(Eigen::VectorXd& prediction, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k)
 {
+    std::cout << "stateTransition" << std::endl;
     double u_v = 0;
     double u_t = 0;
 
-    switch (input_k)
+    double k = input_k(0);
+    prediction.resize(state.size());
+
+    if(k == 81.0)
     {
-        case 81:
-            u_t = 0.054532925;
-            break;
-        case 82:   
-            u_v = 1.5;
-            break;
-        case 83:
-            u_t = -0.054532925;
-            break;
-        case 84:
-            u_v = -1.5;
-            break;
-        default:
-            break;
+        u_t = 0.054532925;
+    }
+    else if(k == 82.0)
+    {
+        u_v = 1.5;
+    }
+    else if(k == 83.0)
+    {
+        u_t = -0.054532925;
+    }
+    else if(k == 84.0)
+    {
+        u_v = -1.5;   
     }
 
     double x = state(0);
@@ -49,13 +70,14 @@ void PoseEstimator::stateTransition(Eigen::VectorXd& state, const int input_k)
     y += - STEP_SIZE*5*std::sin(theta)*u_v;
     theta += STEP_SIZE*2*u_t;
 
-    state << x, y, theta;
+    prediction << x, y, theta;
 
 }
 
 
-void PoseEstimator::outputTransition(Eigen::VectorXd& output, const Eigen::VectorXd& state, const int input_k)
+void PoseEstimator::outputTransition(Eigen::VectorXd& output, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k)
 {
+    std::cout << "outputTransition" << std::endl;
     output.resize(ranges_.size());
     for(int i=0; i<ranges_.size(); i++)
     {

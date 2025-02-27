@@ -5,6 +5,8 @@
 
 #include <Eigen/Dense>
 
+#include <probabilistic_filters/UnscentedKalmanFilter.hpp>
+
 #include "opencv2/opencv.hpp"
 
 #include "typekit.hpp"
@@ -31,11 +33,13 @@ class PoseEstimator
 
         SensorSettings sensor_settings_;
 
+        filters::UnscentedKalmanFilter ukf_;
+
         //! Integration step size use to compute the kinematics of the robot.
         const double STEP_SIZE = 0.2;
 
-        void stateTransition(Eigen::VectorXd& state, const int input_k);
-        void outputTransition(Eigen::VectorXd& output, const Eigen::VectorXd& state, const int input_k);
+        void stateTransition(Eigen::VectorXd& prediction, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k);
+        void outputTransition(Eigen::VectorXd& output, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k);
 };
 
 #endif
