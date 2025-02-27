@@ -54,6 +54,8 @@ public:
      */
     void takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges);
 
+    void setStates(const RobotState &robot_state);
+
     /**
      * @brief Get the state of the robot.
      * 

@@ -35,7 +35,7 @@ class World
          * 
          * @param robot
          */
-        void setRobot(const Robot &robot);
+        void setRobot(const std::vector<Robot> &robots);
 
         /**
          * @brief Get the keyboard key pressed from the user.
@@ -50,7 +50,7 @@ class World
         cv::Mat map_;
 
         //! Robot visualized in the map.
-        Robot robot_;
+        std::vector<Robot> robots_;
 
         //! State of the robot visualized in the map.
         RobotState robot_state_;

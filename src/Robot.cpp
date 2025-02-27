@@ -88,6 +88,11 @@ void Robot::takeMeasurementsRange(cv::Mat &map, Eigen::VectorXd &ranges)
     rangefinder_.getPoints(min_points_);
 }
 
+void Robot::setStates(const RobotState &robot_state)
+{
+    robot_state_ = robot_state;
+}
+
 RobotState Robot::getStates() const
 {
     return robot_state_;
