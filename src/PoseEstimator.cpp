@@ -10,35 +10,40 @@ PoseEstimator::PoseEstimator(const RobotState &initial_state)
     ukf_.initialize(current_state_, file_config_path);
     ukf_.setStateTransitionFunction([this](Eigen::VectorXd& prediction, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k) -> void
                                     {
-                                        std::cout << "stateTransition LAMBDA" << std::endl;
+                                        
                                         this->stateTransition(prediction, state, input_k);
                                     });
     ukf_.setOutputTransitionFunction([this](Eigen::VectorXd& output, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k) -> void
                                     {
+                                        
                                         this->outputTransition(output, state, input_k);
+                                        // std::cout << "output: " << output.transpose() << std::endl;
                                     });
 }
 
-void PoseEstimator::estimatePose(const int input_k, const Eigen::VectorXd& ranges)
+void PoseEstimator::estimatePose(const int input_k, const Eigen::VectorXd& ranges, const Eigen::VectorXd& measurements)
 {
-    std::cout << "estimatePose" << std::endl;
+
     ranges_ = ranges;
     Eigen::VectorXd output;
     // stateTransition(current_state_, input_k);
     // outputTransition(output, current_state_, input_k);
     Eigen::VectorXd input_k_vec(1);
     input_k_vec << input_k;
-    std::cout << "estimatePose1" << std::endl;
+
     ukf_.computePrediction(input_k_vec);
-    std::cout << "estimatePose2" << std::endl;
-    ukf_.computeCorrection(ranges_);
-    std::cout << "estimatePose3" << std::endl;
     ukf_.getState(current_state_);
+
+    // std::cout << "measurements: " << measurements.transpose() << std::endl;
+    ukf_.computeCorrection(measurements);
+
+    ukf_.getState(current_state_);
+
 }
 
 void PoseEstimator::stateTransition(Eigen::VectorXd& prediction, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k)
 {
-    std::cout << "stateTransition" << std::endl;
+
     double u_v = 0;
     double u_t = 0;
 
@@ -75,14 +80,37 @@ void PoseEstimator::stateTransition(Eigen::VectorXd& prediction, const Eigen::Ve
 }
 
 
+// void PoseEstimator::outputTransition(Eigen::VectorXd& output, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k)
+// {
+//     output.resize(ranges_.size());
+//     for(int i=0; i<ranges_.size(); i++)
+//     {
+//         double angle = sensor_settings_.angle_min+(i*sensor_settings_.angle_increment);
+//         double d = ranges_(i);
+//         double x_d = (d*std::cos(angle));
+//         double y_d = (d*std::sin(angle));
+
+//         Eigen::Vector2d pose_d(x_d, y_d);
+//         Eigen::Vector2d pose_d_robot_frame;
+//         Eigen::Matrix2d R;
+//         R << std::cos(state(2)), std::sin(state(2)),
+//              -std::sin(state(2)), std::cos(state(2));
+//         pose_d_robot_frame = R*pose_d + Eigen::Vector2d(state(0), state(1));
+
+//         output(i) = std::sqrt(std::pow(state(0)-pose_d_robot_frame(0),2)+std::pow(state(1)-pose_d_robot_frame(1),2));
+//         // output(i) = ranges_(i);
+//     }
+//     std::cout << output.transpose() << std::endl;
+// }
+
 void PoseEstimator::outputTransition(Eigen::VectorXd& output, const Eigen::VectorXd& state, const Eigen::VectorXd& input_k)
 {
-    std::cout << "outputTransition" << std::endl;
-    output.resize(ranges_.size());
-    for(int i=0; i<ranges_.size(); i++)
+    output.setZero(2*ranges_.size());
+    for(int i=0, k=0; i<2*ranges_.size(); i+=2)
     {
-        double angle = sensor_settings_.angle_min+(i*sensor_settings_.angle_increment);
-        double d = ranges_(i);
+        double angle = sensor_settings_.angle_min+(k*sensor_settings_.angle_increment);
+        double d = ranges_(k);
+        if(i%2==0) ++k;
         double x_d = (d*std::cos(angle));
         double y_d = (d*std::sin(angle));
 
@@ -93,8 +121,13 @@ void PoseEstimator::outputTransition(Eigen::VectorXd& output, const Eigen::Vecto
              -std::sin(state(2)), std::cos(state(2));
         pose_d_robot_frame = R*pose_d + Eigen::Vector2d(state(0), state(1));
 
-        output(i) = std::sqrt(std::pow(state(0)-pose_d_robot_frame(0),2)+std::pow(state(1)-pose_d_robot_frame(1),2));
+        // output(i) = std::sqrt(std::pow(state(0)-pose_d_robot_frame(0),2)+std::pow(state(1)-pose_d_robot_frame(1),2));
+        output(i) = pose_d_robot_frame(0);
+        output(i+1) = pose_d_robot_frame(1);
+        // output(i) = ranges_(i);
     }
+
+
 }
 
 const RobotState& PoseEstimator::getStates() 

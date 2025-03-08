@@ -11,7 +11,8 @@ with_noise_{add_noise}
 
     sensor_settings_.angle_min = -2.0944;
     sensor_settings_.angle_max = 2.0944;
-    sensor_settings_.angle_increment = 0.0061;
+    // sensor_settings_.angle_increment = 0.0061;
+    sensor_settings_.angle_increment = 0.061;
     sensor_settings_.range_min = 0.0010;
     sensor_settings_.range_max = 50.0;
     rangefinder_= RangeFinder(initial_map, sensor_settings_);

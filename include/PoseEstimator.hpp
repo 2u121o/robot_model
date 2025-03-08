@@ -16,7 +16,7 @@ class PoseEstimator
     public:
 
         PoseEstimator(const RobotState &initial_state);
-        void estimatePose(const int input_k, const Eigen::VectorXd& ranges);
+        void estimatePose(const int input_k, const Eigen::VectorXd& ranges, const Eigen::VectorXd& measurements);
 
         const RobotState& getStates();
 
