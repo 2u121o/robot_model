@@ -12,17 +12,21 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+add_subdirectory(python)
+
 set(SOURCES 
     src/main.cpp
     src/Robot.cpp
     src/RangeFinder.cpp
-    src/World.cpp)
+    src/World.cpp
+    src/RobotEnv.cpp)
 
 set(HEADERS 
     include/Robot.hpp
     include/RangeFinder.hpp
     include/typekit.hpp
-    include/World.hpp)
+    include/World.hpp
+    include/RobotEnv.hpp)
 
 add_executable(${PROJECT_NAME}_exe ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME}_exe ${OpenCV_LIBS} ${Eigen3})
